@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Justification Required</h2>
+
+<mat-dialog-content>
+  <p>Please provide a justification for closing this claim with open reserves.</p>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Justification</mat-label>
+      <textarea matInput formControlName="justification"
+        rows="3"
+        placeholder="Explain why the claim is being closed with open reserves...">
+      </textarea>
+      @if (form.get('justification')?.hasError('required')) {
+        <mat-error>Justification is required</mat-error>
+      }
+      @if (form.get('justification')?.hasError('minlength')) {
+        <mat-error>Minimum 10 characters required</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-flat-button color="primary"
+    [disabled]="form.invalid"
+    (click)="onConfirm()">
+    Close Claim
+  </button>
+</mat-dialog-actions>

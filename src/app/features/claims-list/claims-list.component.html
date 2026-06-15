@@ -1,0 +1,151 @@
+<div class="claims-list-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Claims</h1>
+      <p class="subtitle">
+        @if (result()) {
+          {{ result()!.totalCount }} total claims
+        }
+      </p>
+    </div>
+    <button mat-flat-button color="primary" (click)="onNewClaim()">
+      <mat-icon>add</mat-icon>
+      Log New Claim
+    </button>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="page-card filter-bar" [formGroup]="filterForm">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search claims...</mat-label>
+      <input matInput formControlName="searchTerm"
+        placeholder="Claim number, policy, client name" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-field">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option [value]="null">All Statuses</mat-option>
+        @for (status of statusOptions; track status) {
+          <mat-option [value]="status">{{ status }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="page-size-field">
+      <mat-label>Per page</mat-label>
+      <mat-select formControlName="pageSize">
+        @for (size of pageSizeOptions; track size) {
+          <mat-option [value]="size">{{ size }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+      Clear
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48" />
+    </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && result()) {
+    @if (result()!.items.length === 0) {
+      <!-- Empty State -->
+      <div class="empty-state page-card">
+        <mat-icon>inbox</mat-icon>
+        <h3>No claims found</h3>
+        <p>Try adjusting your filters or log a new claim.</p>
+        <button mat-flat-button color="primary"
+          style="margin-top: 16px" (click)="onNewClaim()">
+          Log New Claim
+        </button>
+      </div>
+    } @else {
+      <div class="page-card table-card">
+        <mat-table [dataSource]="result()!.items" class="claims-table">
+
+          <!-- Claim Number -->
+          <ng-container matColumnDef="claimNumber">
+            <mat-header-cell *matHeaderCellDef>Claim Number</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              <strong>{{ claim.claimNumber }}</strong>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Policy Number -->
+          <ng-container matColumnDef="policyNumber">
+            <mat-header-cell *matHeaderCellDef>Policy</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              {{ claim.policyNumber ?? '—' }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Client Name -->
+          <ng-container matColumnDef="clientName">
+            <mat-header-cell *matHeaderCellDef>Client</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              {{ claim.clientName ?? '—' }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Loss Date -->
+          <ng-container matColumnDef="lossDate">
+            <mat-header-cell *matHeaderCellDef>Loss Date</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              {{ claim.lossDate ? (claim.lossDate | date:'dd MMM yyyy') : '—' }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Cause of Loss -->
+          <ng-container matColumnDef="causeOfLoss">
+            <mat-header-cell *matHeaderCellDef>Cause of Loss</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              {{ claim.causeOfLossCode ?? '—' }}
+            </mat-cell>
+          </ng-container>
+          
+          <!-- Total Reserve -->
+          <ng-container matColumnDef="totalReserve">
+            <mat-header-cell *matHeaderCellDef>Total Reserve</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              {{ claim.totalReserve | currency }}
+            </mat-cell>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let claim">
+              <app-status-badge [status]="claim.status" />
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns" />
+          <mat-row
+            *matRowDef="let row; columns: displayedColumns;"
+            class="clickable-row"
+            (click)="onRowClick(row)" />
+
+        </mat-table>
+
+        <!-- Pagination -->
+        <mat-paginator
+          [length]="result()!.totalCount"
+          [pageSize]="filterForm.value.pageSize"
+          [pageSizeOptions]="pageSizeOptions"
+          [pageIndex]="filterForm.value.pageNumber - 1"
+          (page)="onPageChange($event)" />
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+    <p>{{ data.message }}</p>
+    @if (data.warning) {
+    <p style="color: #e65100; font-weight: 500;">
+        ⚠️ {{ data.warning }}
+    </p>
+    }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close(false)">
+        {{ data.cancelLabel ?? 'Cancel' }}
+    </button>
+    <button mat-flat-button color="primary" (click)="dialogRef.close(true)">
+        {{ data.confirmLabel ?? 'Confirm' }}
+    </button>
+</mat-dialog-actions>

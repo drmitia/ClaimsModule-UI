@@ -1,0 +1,30 @@
+<mat-toolbar color="primary">
+  <span routerLink="/claims" style="cursor:pointer">
+    Claims Module
+  </span>
+
+  <span class="spacer"></span>
+
+  <!-- Current user display -->
+  <div class="current-user">
+    <mat-icon>account_circle</mat-icon>
+    <span class="user-name">{{ authService.currentUser().name }}</span>
+    <span class="user-role">{{ authService.currentUser().role }}</span>
+  </div>
+
+  <!-- Role switcher -->
+  <mat-select
+    [value]="authService.currentUser().id"
+    (selectionChange)="onUserSwitch($event.value)"
+    class="user-select">
+    @for (user of authService.getUsers(); track user.id) {
+      <mat-option [value]="user.id">
+        {{ user.name }} ({{ user.role }})
+      </mat-option>
+    }
+  </mat-select>
+</mat-toolbar>
+
+<main class="app-content">
+  <router-outlet />
+</main>
