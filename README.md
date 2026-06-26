@@ -4,14 +4,6 @@ Frontend for the Claims Module — a fullstack insurance claims management syste
 
 ---
 
-## Live Application
-
-| Resource | URL |
-|---|---|
-| **Frontend** | https://zealous-ocean-089476703.7.azurestaticapps.net |
-
----
-
 ## Tech Stack
 
 - Angular 18
